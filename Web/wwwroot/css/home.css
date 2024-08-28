@@ -1,0 +1,26 @@
+﻿
+.product-image-container {
+    max-width: 274px;
+    max-height: 274px;
+    align-content: center;
+    font-size: 25px;
+}
+
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    overflow: hidden;
+}
+
+.product-title {
+    text-decoration: none;
+    color: #343a40;
+    opacity: 75%;
+}
+
+    .product-title:hover {
+        color: #609b8a;
+        opacity: 100%;
+    }

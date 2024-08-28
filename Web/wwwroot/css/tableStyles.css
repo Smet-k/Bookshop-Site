@@ -1,0 +1,11 @@
+﻿tbody {
+    display: block;
+    max-height: 560px;
+    overflow: hidden;
+}
+
+    thead, tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }

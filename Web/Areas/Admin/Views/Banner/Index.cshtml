@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Banner Management";
+    ViewData["ContMan"] = "active-page-nav";
+}
+<link href="~/css/modal.css" rel="stylesheet" />
+<link href="~/css/tableStyles.css" rel="stylesheet" />
+
+@*Modal*@
+<div class="dim"></div>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-warning">
+            <i class="bi bi-exclamation-circle danger"></i>
+            <h1>Are you sure?</h1>
+        </div>
+        <div class="modal-body">
+            <p>You won't be able to revert this</p>
+        </div>
+        <div class="modal-footer">
+            <a id="modalCloseBtn" class="btn btn-danger mx-2">Cancel</a>
+            <a id="modalDeleteBtn" class="btn btn-primary mx-2">Delete</a>
+        </div>
+    </div>
+</div>
+
+@*Page Top*@
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">Banner List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-action="Upsert" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Product
+            </a>
+        </div>
+    </div>
+</div>
+
+@*Search Bar*@
+<div class="col-10">
+    <input type="text" id="searchbar" class="w-100" oninput="search(this)" placeholder="Search" />
+</div>
+
+@*Table*@
+<div class="d-flex flex-column">
+    <div style="height:65dvh">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width:10%;">Id</th>
+                    <th style="width:10%;">Name</th>
+                    <th style="width:20%;">Url</th>
+                    <th style="width:40%;">Image</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    @*Page nav*@
+    <div class="d-flex justify-content-center justify-self-end">
+        <a class="btn btn-outline-dark" onclick="firstPage()"><i class="bi bi-skip-backward"></i> </a>
+        <a class="btn btn-outline-dark" onclick=prevPage()><i class="bi bi-arrow-left"></i></a>
+        @* <input type="text" value="1" style="width:20px"/> *@
+        <h4 id="pageCounter" class="align-text-bottom mx-4">1</h4>
+        <a class="btn btn-outline-dark" onclick=nextPage()><i class="bi bi-arrow-right"></i></a>
+        <a class="btn btn-outline-dark" onclick=lastPage()><i class="bi bi-skip-forward"></i></a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/modal.js"></script>
+    <script src="~/js/banner.js"></script>
+}

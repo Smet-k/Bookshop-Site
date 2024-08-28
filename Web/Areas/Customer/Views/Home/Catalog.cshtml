@@ -1,0 +1,261 @@
+﻿@model CatalogViewModel
+@{
+    ViewData["Title"] = "Home";
+    ViewData["Catalog"] = "active-page-nav";
+    string currentSearch = ViewBag.Search;
+    string currentCategory = ViewBag.Category.ToString();
+    string currentPriceRange = ViewBag.PriceRange;
+    int viewBagCount = ViewBag.ViewBagCount;
+    int maxPrice = ViewBag.MaxPrice;
+    int minPrice = ViewBag.MinPrice;
+}
+<link rel="stylesheet" href="~/css/catalog.css" />
+<link rel="stylesheet" href="~/css/dualSlider.css"/>
+
+<div class="dim" id="dim"></div>
+@*Sidebar*@
+<div class="bg-dark sidepanel" id="filterSidebar">
+    <h1 onclick="filters_close()" class="m-2 text-white" style="cursor:pointer"> <span class="fw-bold">&lt;</span>&nbsp;Filters</h1>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+
+        <div class="p-2 ms-4">
+            <label class="text-white fs-2 p-0">Categories</label>
+            @foreach (var category in Model.Categories)
+            {
+                <div class="ms-4">
+                    <a class="nav-link" onclick="appendParameter('category',@category.Value)" style="cursor:pointer;" >@category.Text</a>
+                </div>
+            }
+        </div>
+        <hr />
+        <div class="p-2 ms-4">
+            <label class="text-white fs-2 p-0">Price</label>
+            <div class="p-2 ms-4 d-flex justify-content-center">
+                <input id="fromInput" type="number" class="rounded price-filter p-1 ms-1 " value="@minPrice" placeholder="Min" />
+                <span class="price-filter-separator text-white">-</span>
+                <input id="toInput" type="number" class="rounded price-filter p-1 ms-1" value="@maxPrice" placeholder="Max" />
+                <a class="btn btn-outline-primary ms-2 text-center price-filter-btn" onclick="filterPrice()">OK</a>
+            </div>
+            <div class="range-container" style="margin:20px">
+                <div class="sliders-control" style="margin:24px">
+                    <input id="fromSlider" type="range" value="@minPrice" min="@minPrice" max="@maxPrice"/>
+                    <input id="toSlider" type="range" value="@maxPrice" min="@minPrice" max="@maxPrice"/>
+                </div>
+            </div>
+        </div>
+    </ul>
+</div>
+
+@*Search Bar*@
+<div class="col-12 d-flex flex-row-reverse top-panel z-1">
+   @*  <div class="col-10 m-1 p-1">
+        <input type="text" id="searchbar" value="@currentSearch" class="w-100 rounded p-1" style="border:2px solid #ced4da" oninput="search(this)" placeholder="Search" />
+    </div> *@
+@*     <div class="col-2 m-1 p-1" style="width:fit-content">
+        <a id="searchBtn" class="btn btn-primary"><i class="bi bi-search"></i> Search</a>
+    </div> *@
+
+</div>
+
+    @if (currentSearch != "")
+    {
+        <h5 class="m-2">Search results for "<span class="text-primary">@currentSearch</span>"</h5>
+    }
+
+<div class="d-block align-content-center w-100 m-2">
+@*Filter Subs*@
+        <a id="filterBtn" onclick="filters_open()" class="btn btn-primary" style="float:right;"><i class="bi bi-funnel-fill"></i> Filter</a>
+@if (viewBagCount > 0)
+{
+    // Cancel button
+        <a onclick="removeAllParameters()" class="btn btn-outline-danger text-dark">Cancel</a>
+
+    if (currentCategory != "0")
+    {
+        <a onclick="removeParameter('category')" class="btn btn-outline-danger text-dark">
+            @Model.Categories.Where(c => c.Value == currentCategory).FirstOrDefault().Text&nbsp;<i class="bi bi-x-circle"></i>
+        </a>
+    }
+
+    if(currentPriceRange != "")
+    {
+        <a onclick="removeParameter('priceRange')" class="btn btn-outline-danger text-dark">
+            @currentPriceRange&nbsp;<i class="bi bi-x-circle"></i>
+        </a>
+    }
+
+
+}
+</div>
+@*Product Cards*@
+<div class="row pb-3" id="productsContainer" style="transition: 0.5s;">
+    @foreach (var product in Model.Products)
+    {
+        <div class="col-lg-3 col-sm-6">
+            <div class="row p-2">
+                <div class="col-12 p-1">
+                    <div class="card border-0 p-3 shadow border-top border-5 rounded">
+                        <a asp-action="Details"
+                           asp-route-productId="@product.Id"
+                           class="product-image-container text-center">
+                            @if (product.ImageUrl != null && product.ImageUrl != "")
+                            {
+                                <img src="@product.ImageUrl" class="rounded product-image">
+                            }
+                            else
+                            {
+                                <img src="~/images/resources/error-image.png" class="rounded product-image">
+                            }
+                        </a>
+                        <div class="card-body pb-2">
+                            <div>
+                                <a asp-action="Details"
+                                   asp-route-productId="@product.Id"
+                                   class="product-title">
+                                    <h5 class="card-title text-center">
+                                        @product.Title
+                                    </h5>
+                                </a>
+                                <p class="card-title text-warning text-center">
+                                    by <span class="fw-bold">
+                                        @product.Author
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-dark text-opacity-75 text-center mb-0">
+                                    List Price: <span class="text-decoration-line-through text-danger">
+                                        @product.ListPrice?.ToString("c")
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-dark text-opacity-75 text-center">
+                                    As low as: <span class="text-success">
+                                        @product.Price100?.ToString("c")
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="d-flex">
+                                <a asp-action="Details"
+                                   asp-route-productId="@product.Id"
+                                   class="btn btn-primary bg-gradient border-0 form-control m-1">
+                                    Details
+                                </a>
+                                @* @if() *@
+                                <a asp-action="AddToCartById"
+                                   asp-route-productId="@product.Id"
+                                   class="btn btn-primary bg-gradient border-0 form-control w-25 m-1">
+                                    <i class="bi bi-cart"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // let btnSearch = document.getElementById("searchBtn");
+        // let searchBar = document.getElementById("searchbar");
+        let btnFilter = document.getElementById("filterBtn");
+        let filterSidebar = document.getElementById("filterSidebar")
+        let dim = document.getElementById("dim");
+        let productContainer = document.getElementById("productsContainer");
+
+        // Getting all string parameters into search button href
+        const url_string = window.location;
+        let url = new URL(url_string);
+
+
+        function removeParameter(name) {
+            url.searchParams.delete(name);
+            window.location.href = url.href;
+        }
+
+        function removeAllParameters() {
+            let params = new Array();
+            for(var [key] of url.searchParams){
+                params.push(key)
+            }
+
+            params.forEach((param) => {
+                url.searchParams.delete(param)
+            })
+
+            window.location.href = url.href;
+        }
+
+        // function initLoad() {
+        //     search(searchBar);
+        // }        
+        
+        function initLoad() {
+            btnSearch.setAttribute("href", url.href)
+        }
+
+        // function search(e) {
+        //     if (e.value == "") {
+        //         url.searchParams.delete("search");
+        //     }
+        //     else {
+        //         url.searchParams.set("search", e.value);
+        //     }
+        //     btnSearch.setAttribute("href", url.href)
+        // }
+
+        $(() => {
+            initLoad();
+        })
+
+        function filters_open() {
+            filterSidebar.style.width = "20%";
+            dim.style.opacity = "0.7";
+            dim.style.zIndex = "2";
+        }
+        function filters_close() {
+            filterSidebar.style.width = "0";
+            dim.style.zIndex = "-1";
+            dim.style.opacity = "0";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == dim) {
+                filters_close();
+            }
+        }
+
+        function filterPrice(){
+            let fromInput = document.getElementById("fromInput");
+            let toInput = document.getElementById("toInput");
+            if (url.searchParams.has("priceRange"))
+            {
+                url.searchParams.set("priceRange", `${fromInput.value}-${toInput.value}`)
+            }
+            else {
+                url.searchParams.append("priceRange", `${fromInput.value}-${toInput.value}`)
+            }
+            window.location.href = url.href;
+        }
+
+        function appendParameter(parameter, value) {
+            if (url.searchParams.has(parameter)) {
+                url.searchParams.set(parameter, value);
+            }
+            else{
+                url.searchParams.append(parameter, value);
+            }
+            window.location.href = url.href;
+        }
+
+
+
+    </script>
+
+    <script src="~/js/dualSlider.js"></script>
+}
+

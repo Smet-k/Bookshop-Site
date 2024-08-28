@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Order Management";
+    ViewData["ManageOrders"] = "active-page-nav";
+}
+<link href="~/css/tableStyles.css" rel="stylesheet" />
+
+@{
+    var status = Context.Request.Query["status"];
+    var pending = "text-primary";
+    var inprocess = "text-primary";
+    var completed = "text-primary";
+    var approved = "text-primary";
+    var all = "text-primary";
+    switch (status)
+    {
+        case "pending":
+            pending = "active text-white bg-primary";
+            break;
+        case "inprocess":
+            inprocess = "active text-white bg-primary";
+            break;
+        case "completed":
+            completed = "active text-white bg-primary";
+            break;
+        case "approved":
+            approved = "active text-white bg-primary";
+            break;
+        default:
+            all = "active text-white bg-primary";
+            break;
+    }
+}
+<div class="card shadow border-0 mt-4 mb-3">
+    <div class="card-header bg-primary bg-gradient ml-0 py-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="py-2 text-white">Order List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pt-3">
+            <div class="col-md-12">
+                <div class="d-flex pb-5 pt-2 justify-content-end">
+                    <div class="list-group list-group-horizontal">
+                        <input hidden id="status" value="@status"/>
+                        <a asp-controller="Order" asp-action="Index" asp-route-status="inprocess" class="list-group-item list-group-item-action @inprocess">In Process</a>
+                        <a asp-controller="Order" asp-action="Index" asp-route-status="pending" class="list-group-item list-group-item-action @pending">Payment Pending</a>
+                        <a asp-controller="Order" asp-action="Index" asp-route-status="completed" class="list-group-item list-group-item-action @completed">Completed</a>
+                        <a asp-controller="Order" asp-action="Index" asp-route-status="approved" class="list-group-item list-group-item-action @approved">Approved</a>
+                        <a asp-controller="Order" asp-action="Index" asp-route-status="all" class="list-group-item list-group-item-action @all">All</a>
+                    </div>
+                </div>
+                @*Search Bar*@
+                <div class="col-10">
+                    <input type="text" id="searchbar" class="w-100" oninput="search(this)" placeholder="Search" />
+                </div>
+
+                <table id="tblData" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:5%">ID</th>
+                            <th style="width:15%">Name</th>
+                            <th style="width:15%">Phone Number</th>
+                            <th style="width:15%">Email</th>
+                            <th style="width:10%">Status</th>
+                            <th style="width:15%">Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                @* Page Nav *@
+                <div class="d-flex justify-content-center justify-self-end">
+                    <a class="btn btn-outline-dark" onclick="firstPage()"><i class="bi bi-skip-backward"></i> </a>
+                    <a class="btn btn-outline-dark" onclick=prevPage()><i class="bi bi-arrow-left"></i></a>
+                    <h4 id="pageCounter" class="align-text-bottom mx-4">1</h4>
+                    <a class="btn btn-outline-dark" onclick=nextPage()><i class="bi bi-arrow-right"></i></a>
+                    <a class="btn btn-outline-dark" onclick=lastPage()><i class="bi bi-skip-forward"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/order.js"></script>
+}

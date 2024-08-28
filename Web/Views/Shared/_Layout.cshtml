@@ -1,0 +1,113 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@inject IHttpContextAccessor HttpContextAccessor
+@inject SignInManager<IdentityUser> SignInManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* <title>@ViewData["Title"] - Web</title> *@
+    <title>@ViewData["Title"]</title>
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/theme.bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
+
+
+</head>
+<body>
+
+
+    <header style="position:sticky;top:0;left:0;z-index:100">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary  border-bottom box-shadow mb-3" data-bs-theme="dark">
+            <div class="container-fluid"> 
+                <a class="navbar-brand fs-4" asp-area="" asp-controller="Home" asp-action="Index">Logo</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 me-auto">
+
+                        <li class="nav-item dropdown">
+                            @if (User.IsInRole(SD.Role_Admin))
+                            {
+                                <a class="nav-link dropdown-toggle text-white header-btn h-100 @ViewData["ContMan"]" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Management</a>
+
+                                <div class="dropdown-menu bg-primary content-management-dropdown">
+                                    <a class="nav-link bg-primary text-white dropdown-item content-management-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Categories</a>
+                                    <a class="nav-link bg-primary text-white dropdown-item content-management-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a>
+                                    <a class="nav-link bg-primary text-white dropdown-item content-management-item" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
+                                    <a class="nav-link bg-primary text-white dropdown-item content-management-item" asp-area="Admin" asp-controller="Banner" asp-action="Index">Banner</a>
+                                    <hr class="dropdown-divider" />
+                                    <a class="nav-link bg-primary text-white dropdown-item content-management-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
+                                    <a class="nav-link bg-primary text-white dropdown-item content-management-item" asp-area="Admin" asp-controller="User" asp-action="Index">Manage Users</a>
+                                </div>
+                            }
+
+                        </li>
+                        <a class="nav-link bg-primary text-white dropdown-item header-btn @ViewData["Home"]" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link bg-primary text-white dropdown-item header-btn @ViewData["Catalog"]" asp-area="Customer" asp-controller="Home" asp-action="Catalog">Catalog</a>
+
+                        <a class="nav-link bg-primary text-white dropdown-item header-btn @ViewData["ManageOrders"]" asp-area="Admin" asp-controller="Order" asp-action="Index">Manage Orders</a>
+                        <div class="d-flex z-1 w-50 m-auto">
+                            <div class="m-1 p-1 w-100 d-flex">
+                                <input type="text" id="searchbar" value="" class="w-100 rounded p-1 bg-light text-dark search-bar"
+                                       oninput="search(this);" placeholder="Search" />
+                                <a id="searchBtn" class="btn text-white text-center btn-dark h-100" style="border-top-left-radius:0;border-bottom-left-radius:0;align-content: center;">Search</></a>
+                            </div>
+                        </div>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <a class="nav-link bg-primary text-white dropdown-item w-auto header-btn @ViewData["Cart"]" asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                @await Component.InvokeAsync("ShoppingCart")
+                            </a>
+
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <partial name="_Notification" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted bg-primary">
+        <div class="container" style="color:white">
+            &copy; 2024 - Web - <a asp-area="Customer" asp-controller="Home" asp-action="Privacy" class="text-white">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/tsxmv87ca7calqu3z7d40lgsmwapd9xepx8vio8xyy968y1m/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        let btnSearch = document.getElementById("searchBtn");
+
+        function search(e) {
+            const url_string = "https://localhost:7173/Customer/Home/Catalog";
+            let url = new URL(url_string);
+            if (window.location.toString().includes(url_string)) {
+                url = new URL(window.location.toString());
+            }
+            if (e.value == "") {
+                url.searchParams.delete("search");
+            }
+            else {
+                url.searchParams.set("search", e.value);
+            }
+            btnSearch.setAttribute("href", url.href)
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

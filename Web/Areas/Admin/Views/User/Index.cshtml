@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "User Management";
+    ViewData["ContMan"] = "active-page-nav";
+}
+<link rel="stylesheet" href="~/css/modal.css"/>
+<link rel="stylesheet" href="~/css/tableStyles.css"/>
+@*Modal*@
+<div class="dim"></div>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-warning">
+            <i class="bi bi-exclamation-circle danger"></i>
+            <h1>Are you sure?</h1>
+        </div>
+        <div class="modal-body">
+            <p>You won't be able to revert this</p>
+        </div>
+        <div class="modal-footer">
+            <a id="modalCloseBtn" class="btn btn-danger mx-2">Cancel</a>
+            <a id="modalDeleteBtn" class="btn btn-primary mx-2">Delete</a>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow border-0 mt-4 mb-3">
+    <div class="card-header bg-primary bg-gradient ml-0 py-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="py-2 text-white">User List</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pt-3">
+            <div class="col-md-12">
+                @*Search Bar*@
+                <div class="col-10">
+                    <input type="text" id="searchbar" class="w-100" oninput="search(this)" placeholder="Search" />
+                </div>
+
+                <table id="tblData" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Company</th>
+                            <th>Role</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            @* Page Nav *@
+            <div class="d-flex justify-content-center justify-self-end">
+                <a class="btn btn-outline-dark" onclick="firstPage()"><i class="bi bi-skip-backward"></i> </a>
+                <a class="btn btn-outline-dark" onclick=prevPage()><i class="bi bi-arrow-left"></i></a>
+                <h4 id="pageCounter" class="align-text-bottom mx-4">1</h4>
+                <a class="btn btn-outline-dark" onclick=nextPage()><i class="bi bi-arrow-right"></i></a>
+                <a class="btn btn-outline-dark" onclick=lastPage()><i class="bi bi-skip-forward"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/user.js"></script>
+    <script src="~/js/modal.js"></script>
+}
