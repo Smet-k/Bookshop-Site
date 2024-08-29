@@ -15,6 +15,11 @@ First you should set your connection string in [appsettings.json](https://github
 ```
  then navigate to Package Manager Console and type `update-database`.
 
+### Admin functions
+Default admin user credentials 
+`Email: admin@gmail.com`
+`Password: 1qaz!QAZ`
+
 ### Setting up Stripe
 To setup [Stripe](https://stripe.com/) you'll just need to change placeholder keys in [appsettings.json](https://github.com/Smet-k/Bookshop-Site/blob/main/Web/appsettings.json) to your personal ones.
 ```
