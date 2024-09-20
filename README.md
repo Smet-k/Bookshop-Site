@@ -17,7 +17,7 @@ First you should set your connection string in [appsettings.json](https://github
 
 ### Admin functions
 Default admin user credentials 
-`Email: admin@gmail.com`
+`Email: admin@bookshop.com`
 `Password: 1qaz!QAZ`
 
 ### Setting up Stripe
